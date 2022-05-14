@@ -19,9 +19,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextArea;
 
 @Component
-public class TelaCadastroDeTipo extends JFrame {
+public class TelaCadastroDePeca extends JFrame {
 	
 	@Autowired
 	private PecaService service;
@@ -32,11 +33,12 @@ public class TelaCadastroDeTipo extends JFrame {
 	private JTextField edtDesc;
 	private JButton btnSalvar;
 	private JTextField edtQuant;
+	private JTextArea jtaEspecificacoes;
 
-	public TelaCadastroDeTipo() {
-		setTitle("Cadastro de tipo de peça");
+	public TelaCadastroDePeca() {
+		setTitle("Cadastro de peça");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 172);
+		setBounds(100, 100, 450, 219);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -58,14 +60,18 @@ public class TelaCadastroDeTipo extends JFrame {
 				JOptionPane.showMessageDialog(btnNewButton, "Vai cancelar nao arrombado");
 			}
 		});
+
+		jtaEspecificacoes = new JTextArea();
+		JLabel lblEspecificacao = new JLabel("Especificações");
 		
-		JButton	btnSalvar = new JButton("Salvar");
+		btnSalvar = new JButton("Salvar");
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Peca novaPeca = new Peca();
 					novaPeca.setDescricao(edtDesc.getText());
 					novaPeca.setQtdeEmEstoque(Integer.parseInt(edtQuant.getText()));
+					novaPeca.setEspecificacoes(jtaEspecificacoes.getText());
 					Peca pecaSalva = service.inserir(novaPeca);
 					JOptionPane.showMessageDialog(btnSalvar, "Salvei");
 					edtDesc.setText(pecaSalva.getId().toString());
@@ -75,10 +81,11 @@ public class TelaCadastroDeTipo extends JFrame {
 			}
 		});
 		
+		JLabel lblQuantidade = new JLabel("Quantidade");
+		
 		edtQuant = new JTextField();
 		edtQuant.setColumns(10);
 		
-		JLabel lblQuantidade = new JLabel("Quantidade");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -86,21 +93,29 @@ public class TelaCadastroDeTipo extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(btnNewButton)
-							.addPreferredGap(ComponentPlacement.RELATED, 245, Short.MAX_VALUE)
-							.addComponent(btnSalvar))
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 							.addComponent(lblId)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(edtId, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblDescricao)
-								.addComponent(lblQuantidade))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(edtQuant, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-								.addComponent(edtDesc, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblDescricao)
+										.addComponent(lblQuantidade))
+									.addGap(34)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(edtQuant, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+										.addComponent(edtDesc, GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblEspecificacao)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(jtaEspecificacoes, GroupLayout.PREFERRED_SIZE, 232, GroupLayout.PREFERRED_SIZE)
+									.addGap(14))))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(btnNewButton)
+							.addPreferredGap(ComponentPlacement.RELATED, 270, Short.MAX_VALUE)
+							.addComponent(btnSalvar)))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -115,13 +130,21 @@ public class TelaCadastroDeTipo extends JFrame {
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(edtQuant, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblQuantidade))
-					.addGap(30)
+						.addComponent(lblQuantidade, GroupLayout.PREFERRED_SIZE, 18, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblEspecificacao)
+						.addComponent(jtaEspecificacoes, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnSalvar)
-						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)))
 		);
 		contentPane.setLayout(gl_contentPane);
+	}
+	public void colocarEmEdicao(Peca pecaSalva) {
+		edtId.setText(pecaSalva.getId().toString());
+		edtDesc.setText(pecaSalva.getDescricao());
+		jtaEspecificacoes.setText(pecaSalva.getEspecificacoes());
 	}
 }
